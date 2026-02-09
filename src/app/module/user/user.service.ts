@@ -9,7 +9,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
     for(const specialtyId of payload.specialties) {
         const specialty = await prisma.specialty.findUnique({
             where: {
-                title: specialtyId
+                id: specialtyId
             }
         })
         if(!specialty) {

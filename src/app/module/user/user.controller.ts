@@ -6,13 +6,14 @@ import status from "http-status";
 
 const createDoctor = catchAsync(
     async (req: Request, res: Response) => {
-        const payload = req.body;   
-
+        const payload = req.body;
+        //  console.log(payload)
         const result = await UserService.createDoctor(payload);
-        sendResponse(res,{
+
+        sendResponse(res, {
             httpStatusCode: status.CREATED,
-            success: true,      
-            message: 'Patient registered successfully',
+            success: true,
+            message: 'Doctor registered successfully',
             data: result
         });
     }
