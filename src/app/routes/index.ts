@@ -11,4 +11,4 @@ router.use('/specialties', SpecialtyRoute);
 router.use("/users", UserRoutes)
 router.use("/doctors", DoctorRoutes)
 
-export const IndexRoutes = router;
+export const IndexRoutes = router;  
