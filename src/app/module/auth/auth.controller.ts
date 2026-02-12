@@ -19,8 +19,8 @@ const registerPatient = catchAsync(
         tokenUtils.setRefreshTokenCookie(res, refreshToken);
         tokenUtils.setBetterAuthSessionCookie(res, token as string);
 
-            sendResponse(res, {
-                httpStatusCode: status.CREATED,
+        sendResponse(res, {
+            httpStatusCode: status.CREATED,
             success: true,
             message: 'Patient registered successfully',
             data: {
@@ -55,7 +55,21 @@ const loginUser = catchAsync(
         });
     })
 
+const getMe = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        console.log({user});
+        const result = await AuthService.getMe(user);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "User profile fetched successfully",
+            data: result
+        })
+    })
+
 export const AuthController = {
     registerPatient,
-    loginUser
+    loginUser,
+    getMe
 }
