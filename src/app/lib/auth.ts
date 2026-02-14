@@ -4,9 +4,12 @@ import { prisma } from "./prisma";
 import { Role, UserStatus } from "../../generated/prisma/enums";
 import { bearer, emailOTP } from "better-auth/plugins";
 import { sendEmail } from "../utils/email";
+import { envVars } from "../config/env";
 
 
 export const auth = betterAuth({
+    baseURL: envVars.BETTER_AUTH_URL,
+    secret: envVars.BETTER_AUTH_SECRET,
     database: prismaAdapter(prisma, {
         provider: "postgresql", // or "mysql", "postgresql", ...etc
     }),
@@ -14,6 +17,24 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
+    },
+
+    socialProviders: {
+        google: {
+            clientId: envVars.GOOGLE_CLIENT_ID,
+            clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+            // callbackUrl: envVars.GOOGLE_CLIENT_URL,
+
+            mapProfileToUser: () => {
+                return {
+                    role: Role.PATIENT,
+                    status: UserStatus.ACTIVE,
+                    needPasswordChange: false,
+                    isDeleted: false,
+                    deletedAt: null,
+                }
+            }
+        }
     },
 
     emailVerification: {
@@ -26,7 +47,7 @@ export const auth = betterAuth({
         additionalFields: {
             role: {
                 type: "string",
-                required: true, 
+                required: true,
                 defaultValue: Role.PATIENT
             },
             status: {
@@ -52,18 +73,18 @@ export const auth = betterAuth({
         }
     },
 
-    plugins:  [
+    plugins: [
         bearer(),
         emailOTP({
             overrideDefaultEmailVerification: true,
-            async sendVerificationOTP({email, otp, type}) {
-                if(type === "email-verification"){
+            async sendVerificationOTP({ email, otp, type }) {
+                if (type === "email-verification") {
                     const user = await prisma.user.findUnique({
                         where: {
                             email,
                         }
                     })
-                    if(user && !user.emailVerified) {
+                    if (user && !user.emailVerified) {
                         sendEmail({
                             to: email,
                             subject: "Verify your email",
@@ -74,13 +95,13 @@ export const auth = betterAuth({
                             }
                         })
                     }
-                } else if(type === "forget-password") {
+                } else if (type === "forget-password") {
                     const user = await prisma.user.findUnique({
                         where: {
                             email,
                         }
                     })
-                    if(user) {
+                    if (user) {
                         sendEmail({
                             to: email,
                             subject: "Password reset OTP",
@@ -99,16 +120,39 @@ export const auth = betterAuth({
     ],
 
     session: {
-        expiresIn:  60 * 60 * 60 *24 ,// 1 day
-        updateAge:  60 * 60 * 60 *24,
+        expiresIn: 60 * 60 * 60 * 24,// 1 day
+        updateAge: 60 * 60 * 60 * 24,
         cookieCache: {
             enabled: true,
-            maxAge:  60 * 60 * 60 *24
+            maxAge: 60 * 60 * 60 * 24
+        }
+    },
+
+    // redirectURLs: {
+    //     signIn: ""
+    // },
+
+    // trustedOrigins: [process.env.BETTER_AUTH_URL || "http://localhost:5000"],
+    advanced: {
+        // disableCSRFCheck: true,
+        useSecureCookies: false,
+        cookies: {
+            state: {
+                attributes: {
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                    path: "/"
+                }
+            },
+            sessionToken: {
+                attributes: {
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                    path: "/"
+                }
+            }
         }
     }
-    
-    // trustedOrigins: [process.env.BETTER_AUTH_URL || "http://localhost:5000"],
-    // advanced: {
-    //     disableCSRFCheck: true,
-    // }
 });
