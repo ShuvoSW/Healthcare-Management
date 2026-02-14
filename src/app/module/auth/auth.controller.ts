@@ -59,7 +59,7 @@ const loginUser = catchAsync(
 const getMe = catchAsync(
     async (req: Request, res: Response) => {
         const user = req.user;
-        console.log({user});
+        console.log({ user });
         const result = await AuthService.getMe(user);
         sendResponse(res, {
             httpStatusCode: status.OK,
@@ -69,17 +69,19 @@ const getMe = catchAsync(
         })
     })
 
-    
+
 const getNewToken = catchAsync(
     async (req: Request, res: Response) => {
 
         const refreshToken = req.cookies.refreshToken;
         const betterAuthSessionToken = req.cookies["better-auth.session_token"];
+        // console.log("Refresh token:",refreshToken);
+        // console.log("Session Token:", betterAuthSessionToken);
 
-        if(!refreshToken) {
+        if (!refreshToken) {
             throw new AppError(status.UNAUTHORIZED, "Refresh token is missing")
-        } 
-        
+        }
+
         const result = await AuthService.getNewToken(refreshToken, betterAuthSessionToken);
 
         const { accessToken, refreshToken: newRefreshToken, sessionToken } = result
@@ -88,7 +90,12 @@ const getNewToken = catchAsync(
         tokenUtils.setRefreshTokenCookie(res, newRefreshToken);
         tokenUtils.setBetterAuthSessionCookie(res, sessionToken);
 
-    
+        sendResponse(res, { 
+            httpStatusCode: 200, 
+            success: true, message: " ", 
+            data: { accessToken, refreshToken, sessionToken } 
+        })
+
     }
 )
 
