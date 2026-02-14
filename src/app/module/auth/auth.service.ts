@@ -402,8 +402,39 @@ const resetPassword = async (email: string, otp: string, newPassword: string) =>
     })
 }
 
-const googleLoginSuccess = async () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const googleLoginSuccess = async (session: Record<string, any>) => {
+    const isPatientExists = await prisma.patient.findUnique({
+        where: {
+            userId: session.user.id,
+        }
+    })
 
+    if(!isPatientExists) {
+        await prisma.patient.create({
+            data: {
+                userId: session.user.id,
+                name: session.user.name,
+                email: session.user.email,
+            }
+        })
+    }
+
+    const accessToken = tokenUtils.getAccessToken({
+           userId: session.user.id,
+                name: session.user.name,
+                email: session.user.email,
+    });
+    const refreshToken = tokenUtils.getRefreshToken({
+           userId: session.user.id,
+                name: session.user.name,
+                email: session.user.email,
+    });
+
+    return {
+        accessToken,
+        refreshToken
+    }
 }
 
 export const AuthService = {

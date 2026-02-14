@@ -25,7 +25,7 @@ interface EnvConfig {
     };
     GOOGLE_CLIENT_ID: string;
     GOOGLE_CLIENT_SECRET: string;
-    GOOGLE_CLIENT_URL: string;
+    GOOGLE_CALLBACK_URL: string;
     FRONTEND_URL: string;
 }
 
@@ -50,7 +50,7 @@ const loadEnvVariables = (): EnvConfig => {
         'EMAIL_SENDER_SMTP_FROM',
         'GOOGLE_CLIENT_ID',
         'GOOGLE_CLIENT_SECRET',
-        'GOOGLE_CLIENT_URL',
+        'GOOGLE_CALLBACK_URL',
         'FRONTEND_URL',
     ]
 
@@ -82,7 +82,7 @@ const loadEnvVariables = (): EnvConfig => {
         },
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
         GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
-        GOOGLE_CLIENT_URL: process.env.GOOGLE_CLIENT_URL as string,
+        GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
         FRONTEND_URL: process.env.FRONTEND_URL as string,
     }
 }
