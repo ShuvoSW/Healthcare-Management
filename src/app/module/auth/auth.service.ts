@@ -267,6 +267,17 @@ const changePassword = async (payload: IChangePasswordPayload, sessionToken: str
         })
     })
 
+    if(session.user.needPasswordChange){
+        await prisma.user.update({
+        where: {
+            id: session.user.id,
+        },
+        data: {
+            needPasswordChange: false
+        }
+    })
+    }
+
     const accessToken = tokenUtils.getAccessToken({
         userId: session.user.id,
         role: session.user.role,
@@ -323,6 +334,62 @@ const verifyEmail = async (email:string, otp: string) => {
     }
 }
 
+const forgetPassword = async (email: string) => {
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+            email,
+        }
+    })
+
+    if(!isUserExist) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    if(!isUserExist.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Email not verified");
+    }
+    if(isUserExist.isDeleted || isUserExist.status === UserStatus.DELETED) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    await auth.api.requestPasswordResetEmailOTP({
+        body: {
+            email,
+        }
+    })
+}
+
+const resetPassword = async (email: string, otp: string, newPassword: string) => {
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+            email,
+            
+        }
+    })
+
+    if(!isUserExist) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    if(!isUserExist.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Email not found");
+    }
+    if(isUserExist.isDeleted || isUserExist.status === UserStatus.DELETED) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    await auth.api.resetPasswordEmailOTP({
+        body: {
+            email,
+            otp,
+            password: newPassword
+        }
+    })
+
+    await prisma.session.deleteMany({
+        where: {
+            userId: isUserExist.id,
+        }
+    })
+}
 export const AuthService = {
     registerPatient,
     loginUser,
@@ -330,5 +397,7 @@ export const AuthService = {
     getNewToken,
     changePassword,
     logoutUser,
-    verifyEmail
+    verifyEmail,
+    forgetPassword,
+    resetPassword
 }
