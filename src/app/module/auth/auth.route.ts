@@ -9,5 +9,7 @@ router.post('/register',AuthController.registerPatient)
 router.post('/login',AuthController.loginUser) 
 router.get("/me", checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.PATIENT, Role.DOCTOR ), AuthController.getMe)
 router.post('/refresh-token',AuthController.getNewToken) 
+router.post("/change-password", checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.PATIENT, Role.DOCTOR ), AuthController.changePassword)
+router.post("/logout", checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.PATIENT, Role.DOCTOR ), AuthController.logoutUser)
 
 export const AuthRoutes = router;  
