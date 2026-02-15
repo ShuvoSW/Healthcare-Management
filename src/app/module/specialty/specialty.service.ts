@@ -2,6 +2,7 @@ import { Specialty } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const createSpecialty = async (payload: Specialty): Promise<Specialty> => {
+        // throw new Error("Testing Error handle in create specialty service");
     const specialty = await prisma.specialty.create({
         data: payload
     })

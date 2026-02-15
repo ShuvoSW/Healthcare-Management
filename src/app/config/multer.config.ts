@@ -1,7 +1,6 @@
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { cloudinaryUpload } from "./cloudinary.config";
 import multer from "multer";
-import { join } from "node:path";
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinaryUpload,
@@ -12,7 +11,7 @@ const storage = new CloudinaryStorage({
         const fileNameWithoutExtension = originalName
         .split(".")
         .slice(0, -1)
-        join(".")
+        .join(".")
         .toLowerCase()
         .replace(/\s+/g, "-")
         // eslint-disable-next-line no-useless-escape
