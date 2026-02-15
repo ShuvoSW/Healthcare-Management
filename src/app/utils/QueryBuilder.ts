@@ -1,11 +1,11 @@
 // T = Model Type
 
-import { IQueryConfig, IQueryParams, PrismaCountArgs, PrismaFindManyArgs, PrismaModelDelegate } from "../interfaces/query.interface"
+import { IQueryConfig, IQueryParams, PrismaCountArgs, PrismaFindManyArgs, PrismaModelDelegate, PrismaStringFilter, PrismaWhereConditions } from "../interfaces/query.interface"
 
 export class QueryBuilder<
-T,
-TWhereInput = Record<string, unknown>,
-TInclude =Record<string, unknown>
+    T,
+    TWhereInput = Record<string, unknown>,
+    TInclude = Record<string, unknown>
 > {
     private query: PrismaFindManyArgs;
     private countQuery: PrismaCountArgs;
@@ -14,14 +14,14 @@ TInclude =Record<string, unknown>
     private skip: number = 0;
     private sortBy: string = 'createdAt';
     private sortOrder: 'asc' | 'desc' = 'desc';
-    private selectFields : Record<string, boolean | undefined>;
+    private selectFields: Record<string, boolean | undefined>;
 
 
     constructor(
-        private model : PrismaModelDelegate,
+        private model: PrismaModelDelegate,
         private queryParams: IQueryParams,
         private config: IQueryConfig
-    ){
+    ) {
         this.query = {
             where: {},
             include: {},
@@ -29,9 +29,85 @@ TInclude =Record<string, unknown>
             skip: 0,
             take: 10,
         };
-    
+
         this.countQuery = {
             where: {},
         }
+
+    }
+
+    search(): this {
+        const { searchTerm } = this.queryParams;
+        const { searchableFields } = this.config
+
+        // doctorSearchableFields = ['user.name', 'user.email', 'specialties.specialty.title' , 'specialties.specialty.description']
+
+        if (searchTerm && searchableFields && searchableFields.length > 0) {
+            const searchConditions: Record<string, unknown>[] =
+                searchableFields.map((field) => {
+                    if (field.includes(".")) {
+                        const parts = field.split(".");
+
+                        if (parts.length === 2) {
+                            const [relation, nestedField] = parts;
+
+                            const stringFilter: PrismaStringFilter = {
+                                contains: searchTerm,
+                                mode: 'insensitive' as const,
+                            }
+                            return {
+                                [relation]: {
+                                    [nestedField]: stringFilter
+                                }
+                            }
+                        } else if (parts.length === 3) {
+                            const [relation, nestedRelation, nestedField,] = parts
+
+                            const stringFilter: PrismaStringFilter = {
+                                contains: searchTerm,
+                                mode: 'insensitive' as const
+                            }
+
+                            return {
+                                // some: {
+
+                                    [relation]: {
+                                        [nestedRelation]: {
+                                            [nestedField]: stringFilter
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    // }
+
+                    // direct field
+                    const stringFilter: PrismaStringFilter = {
+                        contains: searchTerm,
+                        mode: 'insensitive' as const,
+                    }
+
+                    return {
+                        [field]: stringFilter
+                    }
+
+                }
+
+            )
+
+            const whereConditions = this.query.where as PrismaWhereConditions
+            whereConditions.OR = searchConditions;
+
+            const countWhereConditions = this.countQuery.where as PrismaWhereConditions;
+
+            countWhereConditions.OR = searchConditions;
+
+            
+        }
+        return this
     }
 }
+
+
+        
