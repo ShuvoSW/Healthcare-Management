@@ -8,7 +8,7 @@ export interface PrismaFindManyArgs {
     take?: number;
     cursor?: Record<string, unknown>;
     distinct?: string[] | string;
-    [key: string] : unknown;
+    [key: string]: unknown;
 }
 
 export interface PrismaCountArgs {
@@ -20,12 +20,12 @@ export interface PrismaCountArgs {
     take?: number;
     cursor?: Record<string, unknown>;
     distinct?: string[] | string;
-    [key: string] : unknown;
+    [key: string]: unknown;
 }
 
 export interface PrismaModelDelegate {
-    findMany(args ?: any) : Promise<any[]>;
-    findMany(args ?: any) : Promise<number>;
+    findMany(args?: any): Promise<any[]>;
+    findMany(args?: any): Promise<number>;
 }
 
 export interface IQueryParams {
@@ -37,7 +37,7 @@ export interface IQueryParams {
     fields?: string;
     includes?: string;
 
-    [key: string]  : string | undefined;
+    [key: string]: string | undefined;
 }
 
 export interface IQueryConfig {
@@ -45,13 +45,13 @@ export interface IQueryConfig {
     filterableFields?: string[];
 }
 
-export interface PrismaStringFilter{
+export interface PrismaStringFilter {
     contains?: string;
     startsWith?: string;
     endsWith?: string;
     mode?: 'insensitive' | 'default';
     equals?: string;
-    id?: string[];
+    in?: string[];
     notIn?: string[];
     It?: string;
     Ite?: string;
@@ -60,10 +60,21 @@ export interface PrismaStringFilter{
     not?: PrismaStringFilter | string;
 }
 
+export interface PrismaNumberFilter {
+    equals?: number
+    in?: number[];
+    notIn?: number[];
+    It?: number;
+    Ite?: number;
+    gt?: number;
+    gte?: number;
+    not?: PrismaNumberFilter | number;
+}
+
 export interface PrismaWhereConditions {
-    OR ?: Record<string, unknown>[];
-    AND ?: Record<string, unknown>[];
+    OR?: Record<string, unknown>[];
+    AND?: Record<string, unknown>[];
     NOT?: Record<string, unknown>[];
 
-    [key: string] : unknown;
+    [key: string]: unknown;
 }
