@@ -61,13 +61,36 @@ const getAllDoctors = async (query : IQueryParams) => {
     // return result;
 
 
-    const queryBuilder = new QueryBuilder(
+    const queryBuilder = new QueryBuilder<Doctor, Prisma.DoctorWhereInput, Prisma.DoctorInclude>(
         prisma.doctor,
         query,
         {
             searchableFields: doctorSearchableFields,
             filterableFields: doctorFilterableFields
         })
+
+        const result = await queryBuilder
+        .search()
+        .fields()
+        .where({
+            isDeleted: false,
+        })
+        .include({
+            user: true,
+            specialties: true,
+            // specialties: {
+            //     include: {
+            //         specialty: true
+            //     }
+            // }
+        })
+        .dynamicInclude(doctorIncludeConfig)
+        .paginate()
+        .sort()
+        .fields()
+        .execute();
+
+        return result;
 }
 
 const getDoctorById = async (id: string) => {

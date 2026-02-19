@@ -26,3 +26,26 @@ export const doctorFilterableFields = ['gender', 'isDeleted', 'appointmentFee', 
 //     prescriptions: true,
 //     reviews: true,
 // }
+
+export const doctorIncludeConfig: Partial<Record<keyof Prisma.DoctorInclude, Prisma.DoctorInclude[keyof Prisma.DoctorInclude]>> = {
+    user: true,
+    specialties: {
+        include: {
+            specialty: true
+        }
+    },
+    appointments: {
+        include: {
+            patient: true,
+            doctor: true,
+        },
+
+    },
+    doctorSchedules: {
+        include: {
+            schedule: true
+        }
+    },
+    prescriptions: true,
+    reviews: true,
+}
