@@ -202,8 +202,8 @@ export class QueryBuilder<
 
             // Range filter parsing
             if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                queryWhere[key] = this.parseFilterValue(value as Record<string, string | number>);
-                countQueryWhere[key] = this.parseFilterValue(value as Record<string, string | number>);
+                queryWhere[key] = this.parseRangeFilter(value as Record<string, string | number>);
+                countQueryWhere[key] = this.parseRangeFilter(value as Record<string, string | number>);
                 return;
             }
             // direct value parsing

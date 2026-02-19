@@ -15,8 +15,8 @@ const getAllDoctors = catchAsync(
             httpStatusCode: status.OK,
             success: true,
             message: "Doctors fetched successfully",
-            data: result,
-            // meta: result.meta,
+            data: result.data,
+            meta: result.meta,
         })
     }
 )

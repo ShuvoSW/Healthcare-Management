@@ -193,7 +193,7 @@ export const DoctorScalarFieldEnum = {
   experience: 'experience',
   gender: 'gender',
   appointmentFee: 'appointmentFee',
-  qualification: 'qualification',
+  qualifications: 'qualifications',
   currentWorkingPlace: 'currentWorkingPlace',
   designation: 'designation',
   averageRating: 'averageRating',

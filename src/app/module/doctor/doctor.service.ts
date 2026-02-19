@@ -71,7 +71,7 @@ const getAllDoctors = async (query : IQueryParams) => {
 
         const result = await queryBuilder
         .search()
-        .fields()
+        .filter()
         .where({
             isDeleted: false,
         })
@@ -90,6 +90,7 @@ const getAllDoctors = async (query : IQueryParams) => {
         .fields()
         .execute();
 
+        console.log(result);
         return result;
 }
 
