@@ -27,38 +27,47 @@ const getAllDoctors = async (query : IQueryParams) => {
     // // const query = new QueryBuilder().paginate().search().filter();
     // return doctors;
 
-    const queryBuilder = new QueryBuilder<Doctor, Prisma.DoctorWhereInput, Prisma.DoctorInclude>(
+    // const queryBuilder = new QueryBuilder<Doctor, Prisma.DoctorWhereInput, Prisma.DoctorInclude>(
+    //     prisma.doctor,
+    //     query,
+    //     {
+    //         searchableFields: doctorSearchableFields,
+    //         filterableFields: doctorFilterableFields,
+    //     }
+    // )
+
+    // const result = await queryBuilder
+    //     .search()
+    //     .filter()
+    //     .where({
+    //         isDeleted: false,
+    //     })
+    //     .include({
+    //         user: true,
+    //         // specialties: true,
+    //         specialties: {
+    //             include:{
+    //                 specialty: true
+    //             }
+    //         },
+    //     })
+    //     .dynamicInclude(doctorIncludeConfig)
+    //     .paginate()
+    //     .sort()
+    //     .fields()
+    //     .execute();
+
+    //     console.log(result);
+    // return result;
+
+
+    const queryBuilder = new QueryBuilder(
         prisma.doctor,
         query,
         {
             searchableFields: doctorSearchableFields,
-            filterableFields: doctorFilterableFields,
-        }
-    )
-
-    const result = await queryBuilder
-        .search()
-        .filter()
-        .where({
-            isDeleted: false,
+            filterableFields: doctorFilterableFields
         })
-        .include({
-            user: true,
-            // specialties: true,
-            specialties: {
-                include:{
-                    specialty: true
-                }
-            },
-        })
-        .dynamicInclude(doctorIncludeConfig)
-        .paginate()
-        .sort()
-        .fields()
-        .execute();
-
-        console.log(result);
-    return result;
 }
 
 const getDoctorById = async (id: string) => {

@@ -25,7 +25,7 @@ export interface PrismaCountArgs {
 
 export interface PrismaModelDelegate {
     findMany(args?: any): Promise<any[]>;
-    findMany(args?: any): Promise<number>;
+    count (args?: any): Promise<number>;
 }
 
 export interface IQueryParams {
@@ -77,4 +77,14 @@ export interface PrismaWhereConditions {
     NOT?: Record<string, unknown>[];
 
     [key: string]: unknown;
+}
+
+export interface IQueryResult<T>{
+    data: T[];
+    meta: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    } 
 }
