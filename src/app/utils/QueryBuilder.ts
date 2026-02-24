@@ -17,13 +17,13 @@ export class QueryBuilder<
     private skip: number = 0;
     private sortBy: string = 'createdAt';
     private sortOrder: 'asc' | 'desc' = 'desc';
-    private selectFields: Record<string, boolean | undefined> = {};
+    private selectFields: Record<string, boolean> | undefined;
 
 
     constructor(
         private model: PrismaModelDelegate,
         private queryParams: IQueryParams,
-        private config: IQueryConfig
+        private config: IQueryConfig = {}
     ) {
         this.query = { 
             where: {},
@@ -72,18 +72,19 @@ export class QueryBuilder<
                             }
 
                             return {
-                                // some: {
 
                                 [relation]: {
+                                    some: {
                                     [nestedRelation]: {
                                         [nestedField]: stringFilter
                                     }
+                                }
                                 }
                             }
                         }
                     }
 
-                    // }
+                
 
                     // direct field
                     const stringFilter: PrismaStringFilter = {
@@ -117,7 +118,7 @@ export class QueryBuilder<
 
         const { filterableFields } = this.config;
         const excludedField = ['searchTerm', 'page', 'limit', 'sortBy',
-            'sortOrder', 'fields', 'includes'];
+            'sortOrder', 'fields', 'include'];
 
         const filterParams: Record<string, unknown> = {};
 
@@ -139,9 +140,7 @@ export class QueryBuilder<
 
             const isAllowedField = !filterableFields || filterableFields.length === 0 || filterableFields.includes(key);
 
-            if (!isAllowedField) {
-                return;
-            }
+           
 
             // doctorFilterableFields = ['specialties.specialty.title', 'appointmentFee']
             // /doctors?appointmentFee[lt]=100&appointmentFee[gt]=50 => { appointmentFee: { lt: '100', gt: '50' } }
@@ -154,7 +153,7 @@ export class QueryBuilder<
                     return;
                 }
 
-                if (parts.length === 2) {
+                if (parts.length === 2) {        
                     const [relation, nestedField] = parts;
 
                     if(!queryWhere[relation]){
@@ -162,13 +161,20 @@ export class QueryBuilder<
                         countQueryWhere[relation] = {};
                     }
 
-                    queryWhere[relation] = {
-                        [nestedField]: this.parseFilterValue(value)
-                    }
+                    const queryRelation = queryWhere[relation] as Record<string, unknown>;
+                    const countRelation = countQueryWhere[relation] as Record<string, unknown>;
 
-                    countQueryWhere[relation] = {
-                        [nestedField]: this.parseFilterValue(value)
-                    }
+                    // queryWhere[relation] = {
+                    //     [nestedField]: this.parseFilterValue(value)
+                    // }
+
+                    // countQueryWhere[relation] = {
+                    //     [nestedField]: this.parseFilterValue(value)
+                    // }
+
+                    queryRelation[nestedField] = this.parseFilterValue(value);
+                    countRelation[nestedField] = this.parseFilterValue(value);
+
                     return;
                 } else if (parts.length === 3) {
                     const [relation, nestedRelation, nestedField] = parts;
@@ -178,25 +184,43 @@ export class QueryBuilder<
                         countQueryWhere[relation] = {};
                     }
 
-                    queryWhere[relation] = {
-                        [nestedRelation]: {
-                            [nestedField]: this.parseFilterValue(value)
-                        }
+                     const queryRelation = queryWhere[relation] as Record<string, unknown>;
+                    const countRelation = countQueryWhere[relation] as Record<string, unknown>;
+
+                    // queryWhere[relation] = {
+                    //     [nestedRelation]: {
+                    //         [nestedField]: this.parseFilterValue(value)
+                    //     }
+                    // }
+
+                    // countQueryWhere[relation] = {
+                    //     [nestedRelation]: {
+                    //         [nestedField]: this.parseFilterValue(value)
+                    //     }
+                    // }
+
+                    if(!queryRelation[nestedRelation]){
+                        queryRelation[nestedRelation] = {}
                     }
 
-                    countQueryWhere[relation] = {
-                        [nestedRelation]: {
-                            [nestedField]: this.parseFilterValue(value)
-                        }
+                    if(!countRelation[nestedRelation]){
+                        countRelation[nestedRelation] = {}
                     }
+
+                    const queryNestedRelation = queryWhere[nestedRelation] as Record<string, unknown>;
+                    const countNestedRelation = countQueryWhere[nestedRelation] as Record<string, unknown>;
+
+                    queryNestedRelation[nestedField] = this.parseFilterValue(value);
+                    countNestedRelation[nestedField] = this.parseFilterValue(value);
+
                     return;
                 } //else {
                 //     queryWhere[key] = value;
                 //     countQueryWhere[key] = value;
                 // }
-            } else {
-                queryWhere[key] = this.parseFilterValue(value)
-                countQueryWhere[key] = this.parseFilterValue(value)
+            }
+
+             if (!isAllowedField) {
                 return;
             }
 
@@ -265,6 +289,10 @@ export class QueryBuilder<
                     [sortBy]: sortOrder
                 }
             }
+         } else {
+               this.query.orderBy = {
+                    [sortBy]: sortOrder
+                }
          }
 
         return this;
@@ -322,7 +350,7 @@ export class QueryBuilder<
             }
         })
 
-        const includeParam = this.queryParams.includes as string | undefined;
+        const includeParam = this.queryParams.include as string | undefined;
 
         if(includeParam && typeof includeParam === 'string'){
             const requestedRelations = includeParam.split(",").map(relation => 
@@ -387,6 +415,8 @@ export class QueryBuilder<
                 }else{
                     result[key] = source[key];
                 }
+            }else {
+                result[key] = source[key];
             }
         }
         return result;
