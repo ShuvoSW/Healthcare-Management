@@ -149,7 +149,7 @@ export class QueryBuilder<
             if (key.includes(".")) {
                 const parts = key.split(".");
 
-                if(filterableFields && filterableFields.includes(key)) {
+                if(filterableFields && !filterableFields.includes(key)) {
                     return;
                 }
 
@@ -176,45 +176,47 @@ export class QueryBuilder<
                     countRelation[nestedField] = this.parseFilterValue(value);
 
                     return;
-                } else if (parts.length === 3) {
-                    const [relation, nestedRelation, nestedField] = parts;
+                } 
+                // else if (parts.length === 3) {
+                //     const [relation, nestedRelation, nestedField] = parts;
 
-                     if(!queryWhere[relation]){
-                        queryWhere[relation] = {};
-                        countQueryWhere[relation] = {};
-                    }
+                //      if(!queryWhere[relation]){
+                //         queryWhere[relation] = {};
+                //         countQueryWhere[relation] = {};
+                //     }
 
-                     const queryRelation = queryWhere[relation] as Record<string, unknown>;
-                    const countRelation = countQueryWhere[relation] as Record<string, unknown>;
+                //      const queryRelation = queryWhere[relation] as Record<string, unknown>;
+                //     const countRelation = countQueryWhere[relation] as Record<string, unknown>;
 
-                    // queryWhere[relation] = {
-                    //     [nestedRelation]: {
-                    //         [nestedField]: this.parseFilterValue(value)
-                    //     }
-                    // }
+                //     // queryWhere[relation] = {
+                //     //     [nestedRelation]: {
+                //     //         [nestedField]: this.parseFilterValue(value)
+                //     //     }
+                //     // }
 
-                    // countQueryWhere[relation] = {
-                    //     [nestedRelation]: {
-                    //         [nestedField]: this.parseFilterValue(value)
-                    //     }
-                    // }
+                //     // countQueryWhere[relation] = {
+                //     //     [nestedRelation]: {
+                //     //         [nestedField]: this.parseFilterValue(value)
+                //     //     }
+                //     // }
 
-                    if(!queryRelation[nestedRelation]){
-                        queryRelation[nestedRelation] = {}
-                    }
+                //     if(!queryRelation[nestedRelation]){
+                //         queryRelation[nestedRelation] = {}
+                //     }
 
-                    if(!countRelation[nestedRelation]){
-                        countRelation[nestedRelation] = {}
-                    }
+                //     if(!countRelation[nestedRelation]){
+                //         countRelation[nestedRelation] = {}
+                //     }
 
-                    const queryNestedRelation = queryWhere[nestedRelation] as Record<string, unknown>;
-                    const countNestedRelation = countQueryWhere[nestedRelation] as Record<string, unknown>;
+                //     const queryNestedRelation = queryWhere[nestedRelation] as Record<string, unknown>;
+                //     const countNestedRelation = countQueryWhere[nestedRelation] as Record<string, unknown>;
 
-                    queryNestedRelation[nestedField] = this.parseFilterValue(value);
-                    countNestedRelation[nestedField] = this.parseFilterValue(value);
+                //     queryNestedRelation[nestedField] = this.parseFilterValue(value);
+                //     countNestedRelation[nestedField] = this.parseFilterValue(value);
 
-                    return;
-                } //else {
+                //     return;
+                // } 
+                //else {
                 //     queryWhere[key] = value;
                 //     countQueryWhere[key] = value;
                 // }
@@ -305,6 +307,7 @@ export class QueryBuilder<
         //no nested field selection for now, only direct fields
         if(fieldsParam && typeof fieldsParam === 'string'){
               const fieldsArray = fieldsParam?.split(",").map(field => field.trim());
+              this.selectFields = {};
 
         fieldsArray?.forEach((field) => {
             if(this.selectFields){
