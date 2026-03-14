@@ -12,34 +12,34 @@ import { IBookAppointmentPayload } from "./appointment.interface";
 
 // Pay Now Book Appointment
 const bookAppointment = async (payload : IBookAppointmentPayload, user : IRequestUser) => {
-   const patientData = await prisma.patient.findUniqueOrThrow({
-    where : {
-        email : user.email,
-    }
-   });
-
-   const doctorData = await prisma.doctor.findUniqueOrThrow({
-    where : {
-        id : payload.doctorId,
-        isDeleted : false,
-    }
-   });
-
-   const scheduleData = await prisma.schedule.findUniqueOrThrow({
-    where : {
-        id : payload.scheduleId,
-    }
-   });
-
-   const doctorSchedule = await prisma.doctorSchedules.findUniqueOrThrow({
-    where : {
-        doctorId_scheduleId:{
-            doctorId : doctorData.id,
-            scheduleId : scheduleData.id,   
+    const patientData = await prisma.patient.findUniqueOrThrow({
+        where: {
+            email : user.email,
         }
-    }
-   });
-   
+    });
+
+    const doctorData = await prisma.patient.findUniqueOrThrow({
+        where: {
+            id : payload.doctorId,
+            isDeleted : false,
+        }
+    });
+
+    const scheduleData = await prisma.schedule.findUniqueOrThrow({
+        where : {
+            id : payload.scheduleId,
+        }
+    });
+
+    const doctorSchedule = await prisma.doctorSchedules.findUniqueOrThrow({
+        where: {
+            doctorId_scheduleId: {
+                doctorId : payload.doctorId,
+                scheduleId : payload.scheduleId
+            }
+        }
+    });
+
     const videoCallingId = String(uuidv7());
 
     const result = await prisma.$transaction(async (tx) => {
@@ -53,67 +53,25 @@ const bookAppointment = async (payload : IBookAppointmentPayload, user : IReques
         });
 
         await tx.doctorSchedules.update({
-            where : {
-                doctorId_scheduleId:{
-                    doctorId : payload.doctorId,
-                    scheduleId : payload.scheduleId,
+            where: {
+                doctorId_scheduleId: {
+                    doctorId: doctorData.id,
+                    scheduleId: scheduleData.id,
                 }
             },
             data : {
                 isBooked : true,
             }
-        });
-
-        //TODO : Payment Integration will be here
-
-        const transactionId = String(uuidv7());
-
-        const paymentData = await tx.payment.create({
-            data : {
-                appointmentId : appointmentData.id,
-                amount : doctorData.appointmentFee,
-                transactionId
-            }
+            
         });
         
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
-            mode: 'payment',
-            line_items :[
-                {
-                    price_data:{
-                        currency:"bdt",
-                        product_data:{
-                            name : `Appointment with Dr. ${doctorData.name}`,
-                        },
-                        unit_amount : doctorData.appointmentFee * 100,
-                    },
-                    quantity : 1,
-                }
-            ],
-            metadata:{
-                appointmentId : appointmentData.id,
-                paymentId : paymentData.id,
-            },
+        //TODO : Payment Integration will be here
 
-            success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success`,
-
-            // cancel_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-failed`,
-            cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments`,
-        })
-
-        return {
-            appointmentData,
-            paymentData,
-            paymentUrl : session.url,
-        };
+        return appointmentData;
     });
 
-    return {
-        appointment : result.appointmentData,
-        payment : result.paymentData,
-        paymentUrl : result.paymentUrl,
-    };
+    return result;
+   
 }
 
 const getMyAppointments = async (user: IRequestUser) => {

@@ -5,7 +5,8 @@ import { UserRoutes } from "../module/user/user.route";
 import { DoctorRoutes } from "../module/doctor/doctor.route";
 import { scheduleRoutes } from "../module/schedule/schedule.route";
 import { DoctorScheduleRoutes } from "../module/doctorSchedule/doctorSchedule.route";
-import { AppointmentRoutes } from "../appointment/appointment.route";
+import { AppointmentRoutes } from "../module/appointment/appointment.route";
+
 
 const router = Router();
 
