@@ -8,6 +8,7 @@ import { ICreateSchedulePayload, IUpdateSchedulePayload } from "./schedule.inter
 import { convertDateTime } from "./schedule.utils";
 
 const createSchedule = async (payload: ICreateSchedulePayload) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { startDate, endDate, startTime, endTime } = payload;
 
     const interval = 30;
@@ -71,9 +72,27 @@ const createSchedule = async (payload: ICreateSchedulePayload) => {
     return schedules;
 }
 
-// const getAllSchedules = async (payload: ICreateSchedulePayload) => {
+const getAllSchedules = async (query : IQueryParams) => {
+    const queryBuilder = new QueryBuilder<Schedule, Prisma.ScheduleWhereInput, Prisma.ScheduleInclude>(
+        prisma.schedule,
+        query,
+        {
+            searchableFields: scheduleSearchableFields,
+            filterableFields:scheduleFilterableFields
+        }
+    )
 
-// }
+    const result = await queryBuilder
+    .search()
+    .filter()
+    .paginate()
+    .dynamicInclude(scheduleIncludeConfig)
+    .sort()
+    .fields()
+    .execute();
+
+    return result;
+}
 
 const getScheduleById = async (id: string) => {
     const schedule = await prisma.schedule.findUnique({
