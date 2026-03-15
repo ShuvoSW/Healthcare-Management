@@ -18,7 +18,7 @@ const bookAppointment = async (payload : IBookAppointmentPayload, user : IReques
         }
     });
 
-    const doctorData = await prisma.patient.findUniqueOrThrow({
+    const doctorData = await prisma.doctor.findUniqueOrThrow({
         where: {
             id : payload.doctorId,
             isDeleted : false,
@@ -67,10 +67,54 @@ const bookAppointment = async (payload : IBookAppointmentPayload, user : IReques
         
         //TODO : Payment Integration will be here
 
-        return appointmentData;
+        const transactionId = String(uuidv7());
+
+        const paymentData = await tx.payment.create({
+            data : {
+                appointmentId : appointmentData.id,
+                amount : doctorData.appointmentFee,
+                transactionId
+            }
+        });
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'payment',
+            line_items: [
+                {
+                    price_data: {
+                        currency: "bdt",
+                        product_data:{
+                            name: `Appointment with Dr. ${doctorData.name}`,
+                        },
+                        unit_amount : doctorData.appointmentFee * 120
+                    },
+                    quantity : 1,
+                }
+            ],
+            metadata: {
+                appointmentId : appointmentData.id,
+                paymentId : patientData.id,
+            },
+            success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success`,
+
+            cancel_url: `${envVars.FRONTEND_URL}/dashboard/appointments`,
+
+        })
+
+        return {
+             appointmentData,
+             paymentData,
+             paymentUrl : session.url,
+        }
     });
 
-    return result;
+    return {
+        appointment: result.appointmentData,
+        payment : result.paymentData,
+        paymentUrl : result.paymentUrl,
+
+    };
    
 }
 
@@ -215,7 +259,7 @@ const getAllAppointments = async () => {
     return appointments;
 }
 
-const bookAppointmentWithPayLater = async (payload : IBookAppointmentPayload, user : IRequestUser) => {
+const bookAppointmentWithPayLater = async (payload : IBookAppointmentPayload, user : IRequestUser) => { 
     const patientData = await prisma.patient.findUniqueOrThrow({
         where: {
             email: user.email,
@@ -301,7 +345,7 @@ const initiatePayment = async (appointmentId: string, user : IRequestUser) => {
             patientId: patientData.id,
         },
         include: {
-            doctor: true,
+            doctor: true, 
             payment : true,
         }
     });
@@ -314,7 +358,7 @@ const initiatePayment = async (appointmentId: string, user : IRequestUser) => {
         throw new AppError(status.NOT_FOUND, "Payment data not found for this appointment");
     }
 
-    if(appointmentData.payment?.status === PaymentStatus.PAID){
+    if(appointmentData.payment?.status === PaymentStatus.PAID){ 
         throw new AppError(status.BAD_REQUEST, "Payment already completed for this appointment");
     };
 
