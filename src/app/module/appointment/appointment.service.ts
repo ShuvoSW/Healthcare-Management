@@ -88,6 +88,7 @@ const getMyAppointments = async (user: IRequestUser) => {
         }
     });
 
+    // eslint-disable-next-line no-useless-assignment
     let appointments = [];
 
     if (patientData) {
