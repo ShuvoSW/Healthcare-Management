@@ -8,20 +8,33 @@ import { ICreateDoctorSchedulePayload, IUpdateDoctorSchedulePayload } from "./do
 
 const createMyDoctorSchedule = async (user : IRequestUser, payload : ICreateDoctorSchedulePayload) => {
     const doctorData = await prisma.doctor.findUniqueOrThrow({
-        where: {
+        where:{
             email : user.email
         }
-    })
+    });
 
     const doctorScheduleData = payload.scheduleIds.map((scheduleId) => ({
         doctorId : doctorData.id,
         scheduleId
-    }))
+    }) )
 
-    const result = await prisma.doctorSchedules.createMany({
+    await prisma.doctorSchedules.createMany({
         data : doctorScheduleData
+    });
+
+    const result = await prisma.doctorSchedules.findMany({
+        where : {
+            doctorId : doctorData.id,
+            scheduleId : {
+                in : payload.scheduleIds
+            }
+        },
+        include : {
+            schedule: true
+        }
     })
-   
+    
+
     return result;
 }
 

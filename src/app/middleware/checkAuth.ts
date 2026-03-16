@@ -32,7 +32,7 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
 
             if (sessionExists && sessionExists.user) {
                 const user = sessionExists.user;
-
+ console.log("user role:", user.role)
                 const now = new Date();
                 const expiresAt = new Date(sessionExists.expiresAt)
                 const createdAt = new Date(sessionExists.expiresAt)
@@ -49,6 +49,7 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
                     console.log("Session Expiring soon!");
                 }
 
+               
                 if (user.status === UserStatus.BLOCKED || user.status === UserStatus.DELETED) {
                     throw new AppError(status.UNAUTHORIZED, 'Unauthorize access! User is not active.');
                 }
@@ -58,6 +59,7 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
                 if (authRoles.length > 0 && !authRoles.includes(user.role)) {
                     throw new AppError(status.UNAUTHORIZED, 'Forbidden access! You do not have permission to access this resource.');
                 }
+
 
                 req.user = {
                     userId: user.id,

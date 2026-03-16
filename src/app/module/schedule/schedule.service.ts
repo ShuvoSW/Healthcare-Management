@@ -8,21 +8,21 @@ import { ICreateSchedulePayload, IUpdateSchedulePayload } from "./schedule.inter
 import { convertDateTime } from "./schedule.utils";
 
 const createSchedule = async (payload: ICreateSchedulePayload) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    
     const { startDate, endDate, startTime, endTime } = payload;
-
+// console.log("S:", startDate, endDate);
     const interval = 30;
 
     const currentDate = new Date(startDate);
     const lastDate = new Date(endDate);
-
+// console.log("C:", currentDate, lastDate);
     const schedules = []
 
     while (currentDate <= lastDate) {
         const startDateTime = new Date(
             addMinutes(
                 addHours(
-                    `${format(currentDate, "yyyy-MM-d",)}`,
+                    `${format(currentDate, "yyyy-MM-dd")}`,
                     Number(startTime.split(":")[0])
                 ),
                 Number(startTime.split(":")[1])
@@ -32,17 +32,17 @@ const createSchedule = async (payload: ICreateSchedulePayload) => {
         const endDateTime = new Date(
             addMinutes(
                 addHours(
-                    `${format(currentDate, "yyyy-MM-d",)}`,
-                    Number(startTime.split(":")[0])
+                    `${format(currentDate, "yyyy-MM-dd")}`,
+                    Number(endTime.split(":")[0])
                 ),
-                Number(startTime.split(":")[1])
+                Number(endTime.split(":")[1])
             )
         );
 
         while (startDateTime < endDateTime) {
             const s = await convertDateTime(startDateTime);
             const e = await convertDateTime(addMinutes(startDateTime, interval));
-
+        // console.log(startDateTime, endDateTime, s, e);
             const scheduleData = {
                 startDateTime: s,
                 endDateTime: e
@@ -59,7 +59,7 @@ const createSchedule = async (payload: ICreateSchedulePayload) => {
                 const result = await prisma.schedule.create({
                     data: scheduleData
                 })
-
+                console.log(result);
                 schedules.push(result);
             }
 
@@ -109,7 +109,7 @@ const updateSchedule = async (id: string, payload: IUpdateSchedulePayload) => {
     const startDateTime = new Date(
         addMinutes(
             addHours(
-                `${format(new Date(startDate), 'yyyy-MM-dd')}`,
+                `${format(new Date(startDate), "yyyy-MM-dd")}`,
                 Number(startTime.split(':')[0])
             ),
             Number(startTime.split(':')[1])
@@ -119,7 +119,7 @@ const updateSchedule = async (id: string, payload: IUpdateSchedulePayload) => {
     const endDateTime = new Date(
         addMinutes(
             addHours(
-                `${format(new Date(endDate), 'yyyy-MM-dd')}`,
+                `${format(new Date(endDate), "yyyy-MM-dd")}`,
                 Number(endTime.split(':')[0])
             ),
             Number(endTime.split(':')[1])
