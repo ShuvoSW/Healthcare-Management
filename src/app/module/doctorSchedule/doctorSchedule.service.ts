@@ -121,6 +121,7 @@ const updateMyDoctorSchedule = async (user: IRequestUser, payload: IUpdateDoctor
 
             await tx.doctorSchedules.deleteMany({
                 where : {
+                    isBooked: false,
                     doctorId : doctorData.id,
                     scheduleId : {
                         in : deleteIds

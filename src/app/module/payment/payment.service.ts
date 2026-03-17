@@ -21,7 +21,7 @@ const handlerStripeWebhookEvent = async (event : Stripe.Event) => {
 
             const appointmentId = session.metadata?.appointmentId
 
-            const paymentId = session.metadata?.patientId
+            const paymentId = session.metadata?.paymentId
 
             if(!appointmentId || !paymentId){
                 console.error("Missing appointmentId or paymentId in session metadata");

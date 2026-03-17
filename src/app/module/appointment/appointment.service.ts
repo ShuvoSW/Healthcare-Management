@@ -16,6 +16,7 @@ const bookAppointment = async (payload : IBookAppointmentPayload, user : IReques
         where: {
             email : user.email,
         }
+        
     });
 
     const doctorData = await prisma.doctor.findUniqueOrThrow({
@@ -87,14 +88,14 @@ const bookAppointment = async (payload : IBookAppointmentPayload, user : IReques
                         product_data:{
                             name: `Appointment with Dr. ${doctorData.name}`,
                         },
-                        unit_amount : doctorData.appointmentFee * 120
+                        unit_amount : doctorData.appointmentFee * 100
                     },
                     quantity : 1,
                 }
             ],
             metadata: {
                 appointmentId : appointmentData.id,
-                paymentId : patientData.id,
+                paymentId : paymentData.id,
             },
             success_url: `${envVars.FRONTEND_URL}/dashboard/payment/payment-success`,
 
