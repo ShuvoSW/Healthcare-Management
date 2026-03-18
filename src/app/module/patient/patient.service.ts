@@ -1,3 +1,4 @@
+import { deleteFileFromCloudinary } from "../../config/cloudinary.config";
 import { IRequestUser } from "../../interfaces/requestUser.interface";
 import { prisma } from "../../lib/prisma";
 import { IUpdatePatientHealthDataPayload, IUpdatePatientProfilePayload } from "./patient.interface";
@@ -5,6 +6,7 @@ import { convertToDateTime } from "./patient.utils";
 
 const updateMyProfile = async (user: IRequestUser, payload: IUpdatePatientProfilePayload) => {
 
+   
     const patientData = await prisma.patient.findUniqueOrThrow({
         where: {
             email: user.email
@@ -44,11 +46,6 @@ const updateMyProfile = async (user: IRequestUser, payload: IUpdatePatientProfil
         }
         if (payload.patientHealthData) {
 
-            // AI
-            // const payloadKeys = Object.keys(payload.patientHealthData);
-            // if (payloadKeys.length === 0) return;
-            //AI
-
             const healthDataToSave: IUpdatePatientHealthDataPayload = {
                 ...payload.patientHealthData,
             }
@@ -71,52 +68,19 @@ const updateMyProfile = async (user: IRequestUser, payload: IUpdatePatientProfil
                 }
             })
 
-            
-
-            //AI
-            // const hasExistingHealthData = Boolean(patientData.patientHealthData);
-
-            // // When no health record exists yet, only create if the minimal required fields are present.
-            // const requiredForCreate: Array<keyof IUpdatePatientHealthDataPayload> = [
-            //     "gender",
-            //     "dateOfBirth",
-            //     "bloodGroup",
-            //     "height",
-            //     "weight",
-            // ];
-            // const hasRequiredForCreate = requiredForCreate.every(
-            //     (field) => healthDataToSave[field] !== undefined && healthDataToSave[field] !== null && healthDataToSave[field] !== ""
-            // );
-
-            // if (!hasExistingHealthData) {
-            //     if (!hasRequiredForCreate) {
-            //         // Skip creating partial health data when not all required fields are provided.
-            //         return;
-            //     }
-
-            //     await tx.patientHealthData.create({
-            //         data: {
-            //             patientId: patientData.id,
-            //             ...healthDataToSave,
-            //         },
-            //     });
-            //     return;
-            // }
-
-            // await tx.patientHealthData.update({
-            //     where: { patientId: patientData.id },
-            //     data: healthDataToSave,
-            // });
-            //AI
         }
         if(payload.medicalReports && Array.isArray(payload.medicalReports) && payload.medicalReports.length > 0){
             for (const report of payload.medicalReports){
                 if(report.shouldDelete && report.reportId){
-                    await tx.medicalReport.delete({
+                    const deletedReport = await tx.medicalReport.delete({
                         where: {
                             id: report.reportId,
                         }
                     });
+
+                    if(deletedReport.reportLink) {
+                        await deleteFileFromCloudinary(deletedReport.reportLink)
+                    }
                 } else if(report.reportName && report.reportLink){
                     await tx.medicalReport.create({
                         data: {
