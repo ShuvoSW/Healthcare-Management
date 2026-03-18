@@ -1,11 +1,13 @@
 import { BloodGroup, Gender } from "../../../generated/prisma/enums";
 
+
 export interface IUpdatePatientInfoPayload {
     name ?: string;
     profilePhoto ?: string;
     contactNumber ?: string;
     address ?: string
 }
+
 export interface IUpdatePatientHealthDataPayload {
     gender : Gender;
     dateOfBirth: Date;
@@ -15,7 +17,7 @@ export interface IUpdatePatientHealthDataPayload {
     height: string;
     weight: string;
     smokingStatus: boolean;
-    dietaryPreference ?: string;
+    dietaryPreferences ?: string;
     pregnancyStatus: boolean;
     mentalHealthHistory ?: string;
     immunizationStatus ?: string;

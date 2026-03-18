@@ -8,7 +8,7 @@ model PatientHealthData {
   height              String
   weight              String
   smokingStatus       Boolean    @default(false)
-  dietaryPreference  String?
+  dietaryPreferences  String?
   pregnancyStatus     Boolean    @default(false)
   mentalHealthHistory String?
   immunizationStatus  String?

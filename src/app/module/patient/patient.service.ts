@@ -43,10 +43,18 @@ const updateMyProfile = async (user: IRequestUser, payload: IUpdatePatientProfil
 
         }
         if (payload.patientHealthData) {
+
+            // AI
+            // const payloadKeys = Object.keys(payload.patientHealthData);
+            // if (payloadKeys.length === 0) return;
+            //AI
+
             const healthDataToSave: IUpdatePatientHealthDataPayload = {
                 ...payload.patientHealthData,
             }
+
             if (payload.patientHealthData.dateOfBirth) {
+                
                 healthDataToSave.dateOfBirth = convertToDateTime(
                     typeof healthDataToSave.dateOfBirth === "string" ? healthDataToSave.dateOfBirth : undefined
                 ) as Date;
@@ -62,6 +70,44 @@ const updateMyProfile = async (user: IRequestUser, payload: IUpdatePatientProfil
                     ...healthDataToSave
                 }
             })
+
+            
+
+            //AI
+            // const hasExistingHealthData = Boolean(patientData.patientHealthData);
+
+            // // When no health record exists yet, only create if the minimal required fields are present.
+            // const requiredForCreate: Array<keyof IUpdatePatientHealthDataPayload> = [
+            //     "gender",
+            //     "dateOfBirth",
+            //     "bloodGroup",
+            //     "height",
+            //     "weight",
+            // ];
+            // const hasRequiredForCreate = requiredForCreate.every(
+            //     (field) => healthDataToSave[field] !== undefined && healthDataToSave[field] !== null && healthDataToSave[field] !== ""
+            // );
+
+            // if (!hasExistingHealthData) {
+            //     if (!hasRequiredForCreate) {
+            //         // Skip creating partial health data when not all required fields are provided.
+            //         return;
+            //     }
+
+            //     await tx.patientHealthData.create({
+            //         data: {
+            //             patientId: patientData.id,
+            //             ...healthDataToSave,
+            //         },
+            //     });
+            //     return;
+            // }
+
+            // await tx.patientHealthData.update({
+            //     where: { patientId: patientData.id },
+            //     data: healthDataToSave,
+            // });
+            //AI
         }
         if(payload.medicalReports && Array.isArray(payload.medicalReports) && payload.medicalReports.length > 0){
             for (const report of payload.medicalReports){

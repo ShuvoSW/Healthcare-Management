@@ -14,7 +14,7 @@ const updatePatientProfileZodSchema = z.object({
         dateOfBirth: z.string().refine((date) => !isNaN(Date.parse(date)), {
             message: "Invalid date format",
         }).optional(),
-        BloodGroup: z.enum([BloodGroup.AB_POSITIVE, BloodGroup.AB_NEGATIVE, BloodGroup.B_POSITIVE, BloodGroup.B_NEGATIVE, BloodGroup.AB_POSITIVE, BloodGroup.AB_NEGATIVE, BloodGroup.O_POSITIVE, BloodGroup.O_NEGATIVE]).optional(),
+        bloodGroup: z.enum([BloodGroup.A_POSITIVE, BloodGroup.A_NEGATIVE, BloodGroup.B_POSITIVE, BloodGroup.B_NEGATIVE, BloodGroup.AB_POSITIVE, BloodGroup.AB_NEGATIVE, BloodGroup.O_POSITIVE, BloodGroup.O_NEGATIVE]).optional(),
         hasAllergies: z.boolean().optional(),
         hasDiabetes: z.boolean().optional(),
         height: z.string().optional(),

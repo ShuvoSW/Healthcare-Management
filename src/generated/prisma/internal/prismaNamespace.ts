@@ -1875,7 +1875,7 @@ export const PatientHealthDataScalarFieldEnum = {
   height: 'height',
   weight: 'weight',
   smokingStatus: 'smokingStatus',
-  dietaryPreference: 'dietaryPreference',
+  dietaryPreferences: 'dietaryPreferences',
   pregnancyStatus: 'pregnancyStatus',
   mentalHealthHistory: 'mentalHealthHistory',
   immunizationStatus: 'immunizationStatus',
