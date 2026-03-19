@@ -3,20 +3,104 @@ import { envVars } from '../../config/env';
 
 interface PrescriptionData {
     doctorName: string;
-    doctorEmail : string;
+    doctorEmail: string;
     patientName: string;
     patientEmail: string;
     followUpDate: Date;
     instructions: string;
-    prescriptionId : string;
+    prescriptionId: string;
     appointmentDate: Date;
     createdAt: Date;
 }
 
-export const generatePrescriptionPDF = async (prescriptionData: PrescriptionData) : Promise<Buffer> => {
-    return new Promise((resolve, reject) => {
-        try {
-            const doc = new PDFDocument({
+export const generatePrescriptionPDF = async (prescriptionData: PrescriptionData): Promise<Buffer> => {
+
+       return new Promise((resolve, reject) => {
+         try {
+            //{ const doc = new PDFDocument({
+            //     size: 'A4',
+            //     margin: 50
+            // });
+
+            // const chunks : Buffer[] = []
+
+            // doc.on("data", (chunk) => {
+            //     chunks.push(chunk)
+            // });
+
+            // doc.on("end", () => {
+            //     resolve(Buffer.concat(chunks));
+            // });
+
+            // doc.on("error", (err) => {
+            //     reject(err)
+            // });
+
+            // doc.fontSize(24).font("Helvetica-Bold").text("Prescription", {
+            //     align: "center"
+            // });
+            
+            // doc
+            // .fontSize(10)
+            // .font("Helvetica")
+            // .text("PH Healthcare Service", {
+            //     align: "center"
+            // });
+
+            // doc.text("Welcome to PH Healthcare Service. We are committed to providing you with the best healthcare experience possible.", {
+            //     align: "center"
+            // })
+
+            // doc.moveDown(1);
+
+            // doc.moveDown(0.5);
+
+            // doc
+            // .fontSize(11)
+            // .font("Helvetica-Bold")
+            // .text('Doctor Information');
+
+            // doc
+            // .fontSize(10)
+            // font("Helvetica")
+            // .text(`Name: ${prescriptionData.doctorName}`)
+            // .text(`Email: ${prescriptionData.doctorEmail}`);
+
+            // doc.moveDown(0.8);
+
+            // doc
+            // .fontSize(11)
+            // .font("Helvetica-Bold")
+            // .text('Patient Information');
+
+            // doc
+            // .fontSize(10)
+            // font("Helvetica")
+            // .text(`Name: ${prescriptionData.patientName}`)
+            // .text(`Email: ${prescriptionData.patientEmail}`);
+
+            // doc.moveDown(0.8);
+
+            // doc
+            // .fontSize(11)
+            // .font("Helvetica-Bold")
+            // .text('Patient Information');
+
+            // doc
+            // .fontSize(10)
+            // font("Helvetica")
+            // .text(`Prescription ID: ${prescriptionData.prescriptionId}`)
+            // .text(`Created At: ${prescriptionData.createdAt.toDateString()}`)
+            // .text(`Follow-up Date: ${prescriptionData.followUpDate.toDateString()}`)
+            // .moveDown(0.5)
+            // .text('Instructions:')
+            // .text(prescriptionData.instructions, {
+            //     indent: 20,
+            //     align: "justify"
+            // });   }
+
+
+              const doc = new PDFDocument({
                 size: 'A4',
                 margin: 50,
             });
@@ -129,8 +213,10 @@ export const generatePrescriptionPDF = async (prescriptionData: PrescriptionData
 
             // End the document
             doc.end();
+
+
         } catch (error) {
             reject(error);
         }
-    })
+       })
 }

@@ -18,6 +18,14 @@ const givePrescription = async (user: IRequestUser, payload: ICreatePrescription
     const appointmentData = await prisma.appointment.findFirstOrThrow({
         where: {
             id: payload.appointmentId
+        },
+        include: {
+            patient: true,
+            schedule: {
+                include: {
+                    doctorSchedules: true
+                }
+            }
         }
     });
 
@@ -37,7 +45,10 @@ const givePrescription = async (user: IRequestUser, payload: ICreatePrescription
 
     const followUpDate = new Date(payload.followUpData);
 
-    const result = await prisma.prescription.create({
+    
+  const result = await prisma.$transaction(async (tx) => {
+
+      const result = await tx.prescription.create({
         data: {
             ...payload,
             followUpDate,
@@ -46,8 +57,36 @@ const givePrescription = async (user: IRequestUser, payload: ICreatePrescription
         }
     });
 
-    return result;
+    const pdfBuffer = await generatePrescriptionPDF({
+        doctorName: doctorData.name,
+        patientName: appointmentData.patient.name,
+        appointmentDate: appointmentData.schedule.startDateTime,
+        instructions: payload.instructions,
+        followUpDate,
+        doctorEmail: doctorData.email,
+        patientEmail: appointmentData.patient.email,
+        prescriptionId: 'result.id',
+        createdAt: new Date(),
+    });
+
+    const fileName = `prescription-${Date.now()}.pdf`;
+    const uploadedFile = await uploadFileToCloudinary(pdfBuffer, fileName);
+    const pdfUrl = uploadedFile.secure_url;
+
+    const updatedPrescription = await tx.prescription.update({
+        where: {
+            id: result.id
+        },
+        data: {
+            pdfUrl
+        }
+    });
+
+    return updatedPrescription;
+
+  })
   
+  return result; 
 };
 
 const myPrescriptions = async (user: IRequestUser) => {
