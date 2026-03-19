@@ -1,5 +1,6 @@
 import status from "http-status"
-import { error } from "node:console"
+import { Prisma } from "../../generated/prisma/client"
+import { TErrorResponse, TErrorSources } from "../interfaces/error.interface"
 
 const getStatusCodeFromPrismaError = (errorCode: string): number => {
 
@@ -101,4 +102,36 @@ const formatErrorMeta = (meta ?: Record<string, unknown>) : string => {
     return parts.length > 0 ? parts.join(" |"): ""
 }
 
-export const handlePrismaClientKnownRequestError = (error: any) => {}
+export const handlePrismaClientKnownRequestError = (error: Prisma.PrismaClientKnownRequestError) : TErrorResponse => {
+    const statusCode = getStatusCodeFromPrismaError(error.code)
+    const metaInfo = formatErrorMeta(error.meta)
+
+    let cleanMessage = error.message;
+
+    cleanMessage = cleanMessage.replace(/Invalid `.*?` invocation:?\s*/i, "")
+
+    const lines = cleanMessage.split("\n").filter(line => line.trim());
+
+    const mainMessage = lines[0] || "An error occurred with the database operation."
+
+    const errorSources : TErrorSources[] = [
+        {
+            path: error.code,
+            message: metaInfo ? `${mainMessage} | ${metaInfo}` : mainMessage
+        }
+    ];
+
+    if(error.meta?.cause) {
+        errorSources.push({
+            path: "cause",
+            message: String(error.meta.cause)
+        })
+    }
+
+    return {
+        success: false,
+        statusCode,
+        message: `Prisma client known Request Error: ${mainMessage}`,
+        errorSources,
+    }
+}

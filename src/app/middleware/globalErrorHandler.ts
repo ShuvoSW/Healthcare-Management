@@ -9,6 +9,9 @@ import { handleZodError } from "../errorHelpers/handleZodError";
 import AppError from "../errorHelpers/appError";
 import { deleteFileFromCloudinary } from "../config/cloudinary.config";
 import { deleteUploadedFilesFromGlobalErrorHandler } from "../utils/deleteUploadedFilesFromGlobalErrorHandler";
+import { prisma } from "../lib/prisma";
+import { handlePrismaClientKnownRequestError } from "../errorHelpers/handlerPrismaErrors";
+import { Prisma } from "../../generated/prisma/client";
 
 
 
@@ -52,8 +55,13 @@ export const globalErrorHandler = async (err:any, req: Request, res: Response, n
       }
     ]
       */
-
-  if (err instanceof z.ZodError) {
+if(err instanceof Prisma.PrismaClientKnownRequestError) {
+const simplifiedError = handlePrismaClientKnownRequestError(err)
+statusCode = simplifiedError.statusCode as number;
+message = simplifiedError.message
+errorSources = [...simplifiedError.errorSources]
+stack = err.stack;
+} else if (err instanceof z.ZodError) {
     const simplifiedError = handleZodError(err);
     statusCode = simplifiedError.statusCode as number;
     message = simplifiedError.message
