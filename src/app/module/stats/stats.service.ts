@@ -16,10 +16,10 @@ const getDashboardStatsData = async (user : IRequestUser) => {
             statsData = getAdminStatsData();
             break;
         case Role.DOCTOR:
-            statsData = getDoctorStatsData();
+            statsData = getDoctorStatsData(user);
             break;
         case Role.PATIENT:
-            statsData = getPatientStatsData();
+            statsData = getPatientStatsData(user);
             break;
 
         default:
@@ -50,6 +50,9 @@ const getSuperAdminStatsData = async () => {
         }
     })
 
+    const pieChartData = await getPieChartData();
+    const barChartData = await getBarChartData();
+
     return {
         appointmentCount,
         doctorCount,
@@ -57,7 +60,9 @@ const getSuperAdminStatsData = async () => {
         superAdminCount,
         paymentCount,
         userCount,
-        totalRevenue: totalRevenue._sum.amount || 0
+        totalRevenue: totalRevenue._sum.amount || 0,
+        pieChartData,
+        barChartData
     }
 }
 
@@ -76,6 +81,9 @@ const getAdminStatsData = async () => {
                 }
         })
 
+        const pieChartData = await getPieChartData();
+        const barChartData = await getBarChartData();
+
         return {
             appointmentCount,
             doctorCount,
@@ -83,7 +91,9 @@ const getAdminStatsData = async () => {
             paymentCount,
             userCount,
             adminCount,
-            totalRevenue: totalRevenue._sum .amount || 0
+            totalRevenue: totalRevenue._sum .amount || 0,
+            pieChartData,
+            barChartData
         }
 
         
@@ -214,15 +224,16 @@ const getBarChartData = async () => {
         month: Date;
         count: bigint;
     }
+
     const appointmentCountByMonth : AppointmentCountByMonth[] = await prisma.$queryRaw`
-        SELECT DATE_TRUNC('month', "createdAt") AS month,
-        CAST(COUNT(*) AS INTEGER) AS count
-        FROM "appointments"
-        GROUP BY month
-        ORDER BY month ASC;
+       SELECT DATE_TRUNC('month', "createdAt") AS month,
+       CAST(COUNT(*) AS INTEGER) AS count
+       FROM "appointments"
+       GROUP BY month
+       ORDER BY month ASC;
     `
 
-    return appointmentCountByMonth
+return appointmentCountByMonth
 }
 
 
