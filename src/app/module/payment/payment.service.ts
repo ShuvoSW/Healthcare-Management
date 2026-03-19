@@ -62,6 +62,8 @@ const handlerStripeWebhookEvent = async (event : Stripe.Event) => {
 
             });
 
+            
+
             console.log(`Processed checkout.session.completed for appointment ${appointmentId} and payment ${paymentId}`);
             break;
         }

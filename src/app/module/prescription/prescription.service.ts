@@ -21,6 +21,11 @@ const givePrescription = async (user: IRequestUser, payload: ICreatePrescription
         },
         include: {
             patient: true,
+            doctor: {
+                include: {
+                    specialties: true
+                }
+            },
             schedule: {
                 include: {
                     doctorSchedules: true
@@ -81,6 +86,38 @@ const givePrescription = async (user: IRequestUser, payload: ICreatePrescription
             pdfUrl
         }
     });
+
+    try {
+        const patient = appointmentData.patient;
+        const doctor = appointmentData.doctor;
+
+        await sendEmail({
+            to: patient.email,
+            subject: `you have received a new prescription from Dr. ${doctor.name}`,
+            templateName: "prescription",
+            templateData: {
+                doctorName: doctor.name,
+                patientName: patient.name,
+                specialization: doctor.specialties.map((s : any) => s.title).join(", "),
+                appointmentData: new Date(appointmentData.schedule.startDateTime).toLocaleString(),
+                issuedDate: new Date().toLocaleDateString(),
+                instructions: payload.instructions,
+                prescriptionId: result.id,
+                followUpDate: followUpDate.toLocaleDateString(),
+                pdfUrl: pdfUrl
+            },
+            attachments: [
+                {
+                    filename: fileName,
+                    content: pdfBuffer,
+                    contentType: 'application/pdf'
+                }
+            ]
+
+        })
+    } catch (error) {
+        console.log("Failed To send email notification for prescription", error);
+    }
 
     return updatedPrescription;
 
