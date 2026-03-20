@@ -10,7 +10,7 @@ import AppError from "../errorHelpers/appError";
 import { deleteFileFromCloudinary } from "../config/cloudinary.config";
 import { deleteUploadedFilesFromGlobalErrorHandler } from "../utils/deleteUploadedFilesFromGlobalErrorHandler";
 import { prisma } from "../lib/prisma";
-import { handlePrismaClientKnownRequestError, handlePrismaClientUnknownRequestError, handlePrismaClientValidationError } from "../errorHelpers/handlerPrismaErrors";
+import { handlePrismaClientKnownRequestError, handlePrismaClientUnknownRequestError, handlePrismaClientValidationError, handlerPrismaClientInitializationError, handlerPrismaClientRustPanicError } from "../errorHelpers/handlerPrismaErrors";
 import { Prisma } from "../../generated/prisma/client";
 
 
@@ -69,6 +69,18 @@ stack = err.stack;
   stack = err.stack;
 } else if (err instanceof Prisma.PrismaClientValidationError) {
   const simplifiedError = handlePrismaClientValidationError(err);
+  statusCode = simplifiedError.statusCode as number 
+  message = simplifiedError.message
+  errorSources = [...simplifiedError.errorSources]
+  stack = err.stack;
+} else if (err instanceof Prisma.PrismaClientRustPanicError) {
+  const simplifiedError = handlerPrismaClientRustPanicError();
+  statusCode = simplifiedError.statusCode as number 
+  message = simplifiedError.message
+  errorSources = [...simplifiedError.errorSources]
+  stack = err.stack;
+} else if (err instanceof Prisma.PrismaClientInitializationError) {
+  const simplifiedError = handlerPrismaClientInitializationError(err);
   statusCode = simplifiedError.statusCode as number 
   message = simplifiedError.message
   errorSources = [...simplifiedError.errorSources]
