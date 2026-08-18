@@ -16,12 +16,15 @@ import qs from "qs";
 import { PaymentController } from "./app/module/payment/payment.controller";
 import cron from "node-cron";
 import { AppointmentService } from "./app/module/appointment/appointment.service";
+import { requestLogger } from "./app/middleware/requestLogger";
 
 const app: Application = express()
 app.set("query parser", (str : string) => qs.parse(str))
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(process.cwd(), `src/app/templates`));
+
+app.use(requestLogger)
 
 app.post("/webhook", express.raw({type: "application/json"}), PaymentController.handleStripeWebhookEvent)
 

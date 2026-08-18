@@ -1,0 +1,2 @@
+{"timestamp":"2026-08-13T14:47:27.295Z","method":"GET","endpoint":"/","statusCode":400,"responseTimeMs":15.06,"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"}
+{"timestamp":"2026-08-13T14:47:27.376Z","method":"GET","endpoint":"/.well-known/appspecific/com.chrome.devtools.json","statusCode":404,"responseTimeMs":5.43,"ip":"::1","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36"}
