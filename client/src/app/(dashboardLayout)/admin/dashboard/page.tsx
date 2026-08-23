@@ -4,6 +4,8 @@ import { ApiResponse } from "@/types/api.types";
 import { IAdminDashboardData } from "@/types/dashboard.types";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 
+export const dynamic = "force-dynamic";
+
 const AdminDashboardPage = async () => {
   const queryClient = new QueryClient();
 
