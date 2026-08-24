@@ -2,6 +2,8 @@ import DoctorsTable from "@/components/modules/Admin/DoctorsManagement/DoctorsTa
 import { getAllSpecialties, getDoctors } from "@/services/doctor.services";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 
+export const dynamic = "force-dynamic";
+
 const DoctorsManagementPage = async ({
   searchParams,
 }: {

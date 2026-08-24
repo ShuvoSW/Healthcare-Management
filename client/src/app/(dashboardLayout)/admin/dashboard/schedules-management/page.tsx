@@ -1,7 +1,8 @@
-
 import SchedulesTable from "@/components/modules/Admin/SchedulesManagement/SchedulesTable"
 import { getSchedules } from "@/services/schedule.services"
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query"
+
+export const dynamic = "force-dynamic";
 
 const SchedulesManagementPage = async ({
   searchParams,
