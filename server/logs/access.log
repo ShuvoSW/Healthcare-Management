@@ -70,3 +70,17 @@
 {"timestamp":"2026-08-27T08:39:16.055Z","method":"POST","endpoint":"/api/v1/rag/ingest-doctors","statusCode":500,"responseTimeMs":3073.88,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
 {"timestamp":"2026-08-27T08:43:51.531Z","method":"POST","endpoint":"/api/v1/rag/ingest-doctors","statusCode":200,"responseTimeMs":6118.88,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
 {"timestamp":"2026-08-27T08:46:10.594Z","method":"POST","endpoint":"/api/v1/rag/ingest-doctors","statusCode":200,"responseTimeMs":5029.24,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T12:54:42.197Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":5714.65,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T12:57:49.369Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":4614.86,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T12:58:08.283Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":1170.64,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T12:59:02.397Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":1734.94,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T12:59:21.564Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":1462.52,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:08:28.409Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":3604.48,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:09:19.763Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":3294.32,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:16:25.588Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":6482.42,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:19:57.498Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":4355.31,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:21:00.703Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":4383.52,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:23:23.014Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":4269.28,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:27:13.539Z","method":"POST","endpoint":"/api/v1/rag/query","statusCode":200,"responseTimeMs":15242.37,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T13:59:51.650Z","method":"GET","endpoint":"/api/v1/rag/stats","statusCode":200,"responseTimeMs":28.06,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}
+{"timestamp":"2026-08-27T14:01:46.882Z","method":"GET","endpoint":"/api/v1/rag/stats","statusCode":200,"responseTimeMs":614.55,"ip":"::1","userAgent":"PostmanRuntime/7.56.1"}

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 import { EmbeddingService } from "./embedding.service";
@@ -26,10 +27,10 @@ export class RAGService {
             const vectorLiteral = `[${queryEmbedding.join(",")}]`;
 
             const results = await prisma.$queryRaw(Prisma.sql` 
-            SELECT id, "chunkKey", "sourceType", "sourceId", "sourceLabel" content, metadata, embedding, "isDeleted", "deleteAt", "createAt", "updateAt", 1- (embedding <=> CAST(${vectorLiteral} AS vector)) as similarity
-            FROM "document_embedding"
+            SELECT id, "chunkKey", "sourceType", "sourceId", "sourceLabel", content, metadata, embedding, "isDeleted", "deletedAt", "createdAt", "updatedAt", 1- (embedding <=> CAST(${vectorLiteral} AS vector)) as similarity
+            FROM "document_embeddings"
             WHERE "isDeleted" = false
-            ${sourceType ? Prisma.sql`AMD "sourceType" = ${sourceType}` : Prisma.empty}
+            ${sourceType ? Prisma.sql`AND "sourceType" = ${sourceType}` : Prisma.empty}
             ORDER BY embedding <=> CAST(${vectorLiteral} AS vector)
             Limit ${limit}
                 `);
@@ -94,6 +95,32 @@ export class RAGService {
 
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async getStats(){
+        try {
+            const totalDocuments = await prisma.$queryRaw(Prisma.sql`
+                SELECT COUNT(*) as count FROM "document_embeddings" WHERE "isDeleted" = false;
+                `);
+            const sourceTypeCounts = await prisma.$queryRaw(Prisma.sql`
+                SELECT "sourceType", COUNT(*) FROM "document_embeddings" WHERE "isDeleted" = false GROUP BY "sourceType";
+                `)
+
+            return {
+                totalActiveDocuments: Number((totalDocuments as any)[0]?.count ?? 0),
+                sourceTypeBreakdown: (sourceTypeCounts as any).reduce(
+                    (acc: any, curr: any) => {
+                        acc[curr.sourceType] = Number(curr.count);
+                        return acc;
+                    },
+                    {},
+                ),
+                timestamp: new Date(),
+            }    
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
     }
 }

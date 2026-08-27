@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { envVars } from "../../config/env";
 
 export class LLMService{
     private apikey: string;
-    private apiUrl: string = "https://openrouter.ai/api/v1/";
+    private apiUrl: string = "https://openrouter.ai/api/v1";
     private model: string;
 
     constructor(){
@@ -56,7 +57,7 @@ export class LLMService{
       const response = await fetch(`${this.apiUrl}/chat/completions`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apikey}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://healthcare-management.local",
           "X-Title": "Healthcare Management System",
