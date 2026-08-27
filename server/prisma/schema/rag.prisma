@@ -1,6 +1,6 @@
 model  DocumentEmbedding {
   id          String   @id @default(uuid(7))
-  chunkKey  String
+  chunkKey  String   @unique
   sourceType String
   sourceId   String
   sourceLabel String?

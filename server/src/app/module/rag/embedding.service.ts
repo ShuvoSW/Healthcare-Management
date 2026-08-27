@@ -14,4 +14,34 @@ export class EmbeddingService{
         }
     }
 
+    async generateEmbedding(text: string) {
+        try {
+            const response = await fetch(`${this.apiUrl}/embedding`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${this.apikey}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    input: text,
+                    model: this.embeddingModel
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error(`OpenRouter API Error: ${response.status}`);
+
+                }
+
+                const data = await response.json();
+
+                if(!data.data || data.catch.length == 0){
+                    throw new Error("No embedding data returned");
+                }
+
+                return data.data[0].embedding;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
