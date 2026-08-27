@@ -16,7 +16,7 @@ export class EmbeddingService{
 
     async generateEmbedding(text: string) {
         try {
-            const response = await fetch(`${this.apiUrl}/embedding`, {
+            const response = await fetch(`${this.apiUrl}/embeddings`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${this.apikey}`,
@@ -35,7 +35,7 @@ export class EmbeddingService{
 
                 const data = await response.json();
 
-                if(!data.data || data.catch.length == 0){
+                if(!data.data || data.data.length == 0){
                     throw new Error("No embedding data returned");
                 }
 

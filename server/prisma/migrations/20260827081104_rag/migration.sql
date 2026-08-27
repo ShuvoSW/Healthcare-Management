@@ -10,7 +10,7 @@ CREATE TABLE "document_embeddings" (
     "sourceLabel" TEXT,
     "content" TEXT NOT NULL,
     "metadata" JSONB,
-    "embedding" vector(384) NOT NULL,
+    "embedding" vector(2048) NOT NULL,
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "deletedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -20,7 +20,10 @@ CREATE TABLE "document_embeddings" (
 );
 
 -- CreateIndex
-CREATE INDEX "idx_document_embedding_sourceType" ON "document_embeddings"("sourceType");
+CREATE UNIQUE INDEX "document_embeddings_chunkKey_key" ON "document_embeddings"("chunkKey");
 
 -- CreateIndex
-CREATE INDEX "idx_document_embedding_sourceId" ON "document_embeddings"("sourceId");
+CREATE INDEX "idx_document_embeddings_sourceType" ON "document_embeddings"("sourceType");
+
+-- CreateIndex
+CREATE INDEX "idx_document_embeddings_sourceId" ON "document_embeddings"("sourceId");
