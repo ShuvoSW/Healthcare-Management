@@ -42,6 +42,11 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
                     setServerError(result.message || "Login failed");
                     return ;
                 }
+
+                if (result.redirectTo) {
+                    window.location.href = result.redirectTo;
+                    return;
+                }
             } catch (error : any) {
                 console.log(`Login failed: ${error.message}`);
                 setServerError(`Login failed: ${error.message}`);

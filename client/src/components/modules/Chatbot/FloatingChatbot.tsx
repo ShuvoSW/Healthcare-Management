@@ -220,7 +220,8 @@ export default function FloatingChatbot() {
             result.message ?? `${result.indexedCount ?? 0} doctors indexed.`,
         });
       } else {
-        toast.error("Sync failed", { description: result.error });
+        const errorMessage = result.error ?? result.message ?? "Sync failed.";
+        toast.error("Sync failed", { description: errorMessage });
       }
     });
   };

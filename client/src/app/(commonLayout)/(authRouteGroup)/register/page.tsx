@@ -1,8 +1,14 @@
+import RegisterForm from "@/components/modules/Auth/RegisterForm";
 
-const RegisterPage = () => {
-  return (
-    <div>RegisterPage</div>
-  )
+interface RegisterParams {
+  searchParams: Promise<{ redirect?: string }>;
 }
 
-export default RegisterPage
+const RegisterPage = async ({ searchParams }: RegisterParams) => {
+  const params = await searchParams;
+  const redirectPath = params.redirect;
+
+  return <RegisterForm redirectPath={redirectPath} />;
+};
+
+export default RegisterPage;

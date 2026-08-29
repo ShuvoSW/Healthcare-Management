@@ -69,9 +69,11 @@ export const ingestDoctorsAction = async() => {
         }
     } catch (error) {
         console.log(error);
+        const message = "Failed to sync doctor data. Please try again.";
         return {
             success: false,
-            message: "Failed to sync doctor data. Please try again."
+            message,
+            error: message,
         }
     }
 }
